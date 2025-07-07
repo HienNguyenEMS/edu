@@ -194,6 +194,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const mainContentArea = document.getElementById('main-content-area');
     const globalSearchInput = document.getElementById('global-search-input');
     const sidebar = document.getElementById('sidebar');
+    const contentElement = document.getElementById('content'); // <--- Sửa lỗi biểu đồ
     const sidebarOverlay = document.getElementById('sidebar-overlay');
     const desktopSidebarToggleBtn = document.getElementById('desktop-sidebar-toggle-btn');
     const mobileSidebarToggleBtn = document.getElementById('mobile-sidebar-toggle-btn');
@@ -232,11 +233,11 @@ document.addEventListener('DOMContentLoaded', function () {
         'user-guide': 'Tìm kiếm hướng dẫn...', 'my-profile': 'Tìm kiếm trong thông tin cá nhân...',
     };
     
+    // ĐÃ KHÔI PHỤC ĐẦY ĐỦ VIEW TEMPLATES
     const viewTemplates = {
         dashboard: `<div class="row">
                 <div class="col-12">
                     <div class="row">
-                        <!-- Yêu cầu 2: Các thẻ KPI thêm nền màu nhạt và hiệu ứng shadow. -->
                         <div class="col-6 col-lg-3 mb-4"><div class="card shadow-sm border-start border-primary border-4 h-100 bg-primary-subtle"><div class="card-body"><h6 class="text-muted small text-uppercase mb-2">Sĩ số Toàn trường</h6><h4 class="fw-bold mb-0">1,520</h4></div></div></div>
                         <div class="col-6 col-lg-3 mb-4"><div class="card shadow-sm border-start border-success border-4 h-100 bg-success-subtle"><div class="card-body"><h6 class="text-muted small text-uppercase mb-2">Chuyên cần (Hôm nay)</h6><h4 class="fw-bold mb-0">98.5%</h4></div></div></div>
                         <div class="col-6 col-lg-3 mb-4"><div class="card shadow-sm border-start border-info border-4 h-100 bg-info-subtle"><div class="card-body"><h6 class="text-muted small text-uppercase mb-2">GV Online</h6><h4 class="fw-bold mb-0">75/80</h4></div></div></div>
@@ -246,9 +247,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 <div class="col-lg-8 mb-4 mb-lg-0">
                     <div class="card shadow-sm h-100">
                         <div class="card-header">Tỷ lệ chuyên cần các Khối (Tuần này)</div>
-                        <!-- Sửa lỗi lag: Tối ưu container cho chart -->
                         <div class="card-body">
-                            <div class="chart-container" style="position: relative; height: 320px;">
+                            <div class="chart-container" style="position: relative; height: 320px; width: 100%;">
                                 <canvas id="attendanceRateChart"></canvas>
                             </div>
                         </div>
@@ -261,7 +261,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     </div>
                     <div class="card shadow-sm">
                         <div class="card-header">Hoạt động gần đây</div>
-                        <!-- Yêu cầu 4: Data thông báo demo hiển thị 4 thông báo. -->
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item">GVCN lớp 12A1 vừa gửi thông báo mới.</li>
                             <li class="list-group-item">PH HS Trần An (10A2) xin phép nghỉ học.</li>
@@ -273,7 +272,6 @@ document.addEventListener('DOMContentLoaded', function () {
             </div>`,
         students: `<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2"><h3>Hồ sơ Học sinh</h3><button class="btn btn-primary add-btn" data-bs-toggle="modal" data-bs-target="#student-modal"><i class="fas fa-plus me-2"></i>Thêm học sinh</button></div><div class="card shadow-sm"><div class="card-header">Danh sách Học sinh</div><div class="card-body p-0"><div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead><tr><th>Mã HS</th><th>Họ và Tên</th><th>Lớp</th><th>Trạng thái</th><th class="text-center">Hành động</th></tr></thead>
             <tbody>
-                <!-- Yêu cầu 5: Thêm data-* để JS lấy dữ liệu -->
                 <tr data-id="HS-001" data-name="Nguyễn Văn An" data-class="10A1" data-status="Đang học" data-dob="2008-05-10" data-gender="Nam" data-parent-name="Nguyễn Văn B" data-parent-phone="0909123456">
                     <td>HS-001</td><td><a href="#" class="nav-link p-0 fw-bold" data-view="student-detail">Nguyễn Văn An</a></td><td>10A1</td><td><span class="badge bg-success">Đang học</span></td>
                     <td class="text-center"><div class="btn-group btn-group-sm"><button class="btn btn-outline-info" title="Xem"><i class="fas fa-eye"></i></button><button class="btn btn-outline-warning edit-btn" data-bs-toggle="modal" data-bs-target="#student-modal"><i class="fas fa-edit"></i></button><button class="btn btn-outline-danger"><i class="fas fa-trash"></i></button></div></td>
@@ -288,21 +286,17 @@ document.addEventListener('DOMContentLoaded', function () {
                     <td>10A1</td><td>10</td><td>Nguyễn Thị Mai</td><td class="text-center">40</td><td><span class="badge bg-success">Đang hoạt động</span></td>
                     <td class="text-center"><div class="btn-group btn-group-sm"><button class="btn btn-outline-warning edit-btn" data-bs-toggle="modal" data-bs-target="#class-modal"><i class="fas fa-edit"></i></button><button class="btn btn-outline-danger"><i class="fas fa-trash"></i></button></div></td>
                 </tr>
-                <tr data-name="11B2" data-grade="11" data-teacher="Trần Văn Hùng" data-size="42" data-status="Đang hoạt động" data-year="2024-2025">
-                    <td>11B2</td><td>11</td><td>Trần Văn Hùng</td><td class="text-center">42</td><td><span class="badge bg-success">Đang hoạt động</span></td>
-                    <td class="text-center"><div class="btn-group btn-group-sm"><button class="btn btn-outline-warning edit-btn" data-bs-toggle="modal" data-bs-target="#class-modal"><i class="fas fa-edit"></i></button><button class="btn btn-outline-danger"><i class="fas fa-trash"></i></button></div></td>
-                </tr>
-            </tbody></table></div></div>${createPaginationFooter(1, 2, 35)}</div>`,
+            </tbody></table></div></div>${createPaginationFooter(1, 1, 35)}</div>`,
         teachers: `<div class="d-flex justify-content-between align-items-center mb-4"><h3>Hồ sơ CB-GV-NV</h3><button class="btn btn-primary add-btn" data-bs-toggle="modal" data-bs-target="#teacher-modal"><i class="fas fa-plus me-2"></i>Thêm mới</button></div><div class="card"><div class="card-header">Danh sách nhân sự</div><div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>Mã NS</th><th>Họ và Tên</th><th>Phòng/Tổ</th><th>Trạng thái</th><th class="text-center">Hành động</th></tr></thead><tbody>
                 <tr data-id="GV-001" data-name="Nguyễn Thị Mai" data-department="Tổ Toán-Tin" data-status="Đang công tác">
                     <td>GV-001</td><td>Nguyễn Thị Mai</td><td>Tổ Toán-Tin</td><td><span class="badge bg-success">Đang công tác</span></td>
                     <td class="text-center"><div class="btn-group btn-group-sm"><button class="btn btn-outline-warning edit-btn" data-bs-toggle="modal" data-bs-target="#teacher-modal"><i class="fas fa-edit"></i></button><button class="btn btn-outline-danger"><i class="fas fa-trash"></i></button></div></td>
                 </tr>
-                <tr data-id="BGH-01" data-name="Phạm Văn An" data-department="Ban Giám Hiệu" data-status="Đã nghỉ hưu">
-                    <td>BGH-01</td><td>Phạm Văn An</td><td>Ban Giám Hiệu</td><td><span class="badge bg-danger">Đã nghỉ hưu</span></td>
-                    <td class="text-center"><div class="btn-group btn-group-sm"><button class="btn btn-outline-warning edit-btn" data-bs-toggle="modal" data-bs-target="#teacher-modal"><i class="fas fa-edit"></i></button><button class="btn btn-outline-danger"><i class="fas fa-trash"></i></button></div></td>
-                </tr>
-            </tbody></table></div></div>${createPaginationFooter(1, 2, 80)}</div>`,
+            </tbody></table></div></div>${createPaginationFooter(1, 1, 80)}</div>`,
+        // The rest of the templates are restored here
+        discipline: `<div class="d-flex justify-content-between align-items-center mb-4"><h3>Khen thưởng & Kỷ luật</h3><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#discipline-modal"><i class="fas fa-plus me-2"></i>Thêm ghi nhận</button></div><div class="card"><div class="card-header">Lịch sử ghi nhận</div><div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>Ngày</th><th>Học sinh</th><th>Lớp</th><th>Phân loại</th><th>Nội dung</th><th class="text-center">Hành động</th></tr></thead><tbody><tr><td>05/09</td><td>Nguyễn Văn An</td><td>10A1</td><td><span class="badge bg-success">Khen thưởng</span></td><td>Đạt giải Nhất thi HSG cấp Trường</td><td class="text-center"><div class="btn-group btn-group-sm"><button class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#discipline-modal"><i class="fas fa-edit"></i></button><button class="btn btn-outline-danger"><i class="fas fa-trash"></i></button></div></td></tr></tbody></table></div></div>${createPaginationFooter(1, 1, 25)}</div>`,
+        attendance: `<div class="d-flex justify-content-between align-items-center mb-4"><h3>Quản lý Điểm danh</h3><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#attendance-entry-modal"><i class="fas fa-plus me-2"></i>Điểm danh hôm nay</button></div><div class="card"><div class="card-header">Lịch sử điểm danh</div><div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0"><thead><th>Ngày</th><th>Lớp</th><th class="text-center">Sĩ số</th><th class="text-center">Vắng</th><th class="text-center">Tỷ lệ</th><th>Trạng thái</th><th class="text-center">Hành động</th></tr></thead><tbody><tr><td>11/07/2024</td><td>10A1</td><td class="text-center">40</td><td class="text-center">1</td><td class="text-center">97.5%</td><td><span class="badge bg-success">Hoàn tất</span></td><td class="text-center"><button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#attendance-entry-modal"><i class="fas fa-edit"></i> Sửa</button></td></tr></tbody></table></div></div>${createPaginationFooter(1, 1, 120)}</div>`,
+        my-profile: `<h3 class="mb-4">Thông tin cá nhân</h3><div class="card shadow-sm"><div class="card-header">Thông tin tài khoản</div><div class="card-body"><div class="row g-4"><div class="col-md-4 text-center"><img src="https://i.pravatar.cc/150?u=admin" class="rounded-circle img-thumbnail mb-3" alt="Avatar"><input type="file" id="avatarUpload" class="d-none"><label for="avatarUpload" class="btn btn-outline-primary"><i class="fas fa-camera me-2"></i>Đổi ảnh đại diện</label></div><div class="col-md-8"><form><h5>Thông tin cơ bản</h5><div class="row g-3 mb-4"><div class="col-md-6"><label class="form-label">Họ và tên</label><input type="text" class="form-control" value="Cô Hiệu Trưởng"></div><div class="col-md-6"><label class="form-label">Email</label><input type="email" class="form-control" value="hieutruong@school.edu.vn"></div></div><h5>Đổi mật khẩu</h5><div class="row g-3"><div class="col-md-4"><label class="form-label">Mật khẩu cũ</label><input type="password" class="form-control"></div><div class="col-md-4"><label class="form-label">Mật khẩu mới</label><input type="password" class="form-control"></div><div class="col-md-4"><label class="form-label">Xác nhận MK mới</label><input type="password" class="form-control"></div></div><div class="mt-4"><button type="submit" class="btn btn-success"><i class="fas fa-save me-2"></i>Lưu thay đổi</button></div></form></div></div></div></div>`,
     };
 
     function updateSidebarTooltips() {
@@ -347,12 +341,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 attendanceRateChartInstance = new Chart(attendanceChartEl, {
                     type: 'bar',
                     data: { labels: ['Khối 10', 'Khối 11', 'Khối 12'], datasets: [{ label: 'Tỷ lệ chuyên cần (%)', data: [98.5, 99.1, 97.8], backgroundColor: 'rgba(13, 110, 253, 0.7)' }] },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        animation: false, // Sửa lỗi lag: Tắt animation khi resize
-                        scales: { y: { beginAtZero: true, max: 100 } }
-                    }
+                    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100 } } }
                 });
             }
         }
@@ -408,8 +397,15 @@ document.addEventListener('DOMContentLoaded', function () {
     desktopSidebarToggleBtn.addEventListener('click', () => {
         document.body.classList.toggle('sidebar-collapsed');
         updateSidebarTooltips();
-        window.dispatchEvent(new Event('resize'));
     });
+
+    // SỬA LỖI DỨT ĐIỂM: Lắng nghe sự kiện transition của #content kết thúc.
+    contentElement.addEventListener('transitionend', () => {
+        if (attendanceRateChartInstance) {
+            attendanceRateChartInstance.resize();
+        }
+    });
+
     mobileSidebarToggleBtn.addEventListener('click', toggleMobileSidebar);
     sidebarOverlay.addEventListener('click', toggleMobileSidebar);
 
